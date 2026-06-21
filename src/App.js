@@ -3,6 +3,7 @@ import EmployeeList from './components/EmployeeList';
 import EmployeeFilters from './components/EmployeeFilters';
 import EmployeeForm from './components/EmployeeForm';
 import { useState, useEffect, useCallback } from "react";
+import EmployeeSearch from './components/EmployeeSearch';
 
 
 function App() {
@@ -11,6 +12,8 @@ function App() {
   const [employees, setEmployees] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [departmentFilter, setDepartmentFilter] = useState("ALL");
+  const [search, setSearch] = useState("");
 
  const fetchEmployees = () => {
   return new Promise((resolve, reject) => {
@@ -59,13 +62,24 @@ const loadEmployees = useCallback(async () => {
     visibleEmployees = visibleEmployees.filter((employee => employee.active));
   }
 
+  if (departmentFilter !== "ALL") {
+  visibleEmployees = visibleEmployees.filter(
+    e => e.department === departmentFilter)
+  };
+
   if(showHROnly){
     visibleEmployees = visibleEmployees.filter((employee => employee.department === "HR"))
-  }
+  };
 
   let resetFilters = () => {
     setShowActiveOnly(false);
     setShowHROnly(false);
+  };
+
+
+  if(search.trim() !== ""){
+    visibleEmployees = visibleEmployees.filter(e =>
+      e.name.toLowerCase().includes(search.toLowerCase()));
   }
 
   const addEmployee = (newEmployee) => {
@@ -85,6 +99,11 @@ const loadEmployees = useCallback(async () => {
       />
 
       <EmployeeForm addEmployee={addEmployee} />
+
+      <EmployeeSearch
+        search = {search}
+        setSearch = {setSearch}
+      />
       
       {loading ? <p>Loading...</p> :
       error ? <div>
