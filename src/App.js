@@ -15,22 +15,13 @@ function App() {
   const [departmentFilter, setDepartmentFilter] = useState("ALL");
   const [search, setSearch] = useState("");
 
- const fetchEmployees = () => {
-  return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      const shouldFail = Math.random() < 0.3; //just to test employees not loading
+  const fetchEmployees = async () => {
+    const response = await fetch("http:localhost:5000/employees");
 
-      if (shouldFail) {
-        reject("API failed");
-      } else {
-        resolve([
-          { id: 1, name: "Alice", department: "Engineering", active: true },
-          { id: 2, name: "Bob", department: "HR", active: false }
-        ]);
-      }
-    }, 1000);
-  });
-};
+    const data = await response.json();
+
+    return data;
+  };
 
 //Functions defined inside components are recreated each render,
 //so they must be included in dependency arrays or stabilized using useCallback.
